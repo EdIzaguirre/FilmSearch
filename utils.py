@@ -1,6 +1,7 @@
 import requests
 import csv
 import time
+import wikipediaapi
 
 
 def get_id_list(api_key, year, max_retries=5):
@@ -94,11 +95,13 @@ def write_file(filename, dict):
     overview = dict['overview']
     all_genres = dict['genres']
 
+    # Parsing genres
     genre_str = ""
     for genre in all_genres:
         genre_str += genre['name'] + ", "
     genre_str = genre_str[:-2]
 
+    # Parsing keywords
     all_keywords = dict['keywords']['keywords']
     keyword_str = ""
     for keyword in all_keywords:
@@ -106,8 +109,25 @@ def write_file(filename, dict):
 
     keyword_str = keyword_str[:-2]
 
+    # Adding Wikipedia summaries if available
+    wiki_wiki = wikipediaapi.Wikipedia(
+        user_agent='FilmBot (ed.izaguirre@pm.me)',
+        language='en',
+        extract_format=wikipediaapi.ExtractFormat.WIKI
+    )
+
+    p_wiki = wiki_wiki.page(title)
+
+    if p_wiki.exists():
+        # If wiki exists, append text
+        wiki_summary = p_wiki.text
+    else:
+        # Otherwise, append a blank string
+        wiki_summary = ""
+
     result = [title, runtime, language, overview,
-              release_date, genre_str, keyword_str]
+              release_date, genre_str, keyword_str, wiki_summary]
+
     # write data
     csvwriter.writerow(result)
     csvFile.close()
