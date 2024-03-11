@@ -20,7 +20,7 @@ def get_id_list(api_key, year, max_retries=5):
 
     movie_ids = []
 
-    total_pages = 5  # 5 pages of ids ~ 100 movies
+    total_pages = 5  # 5 pages of ids = 100 movies
     for page in range(1, total_pages + 1):
         response = requests.get(url + f'&page={page}')
         for i in range(max_retries):
