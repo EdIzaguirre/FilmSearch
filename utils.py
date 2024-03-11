@@ -19,11 +19,8 @@ def get_id_list(api_key, year, max_retries=5):
             year}&include_video=false&language=en-US&sort_by=popularity.desc'
 
     movie_ids = []
-    response = requests.get(url)
-    dict = response.json()
-    # total_pages = dict['total_pages']
 
-    total_pages = 5  # Temporary hardcode
+    total_pages = 5  # 5 pages of ids ~ 100 movies
     for page in range(1, total_pages + 1):
         response = requests.get(url + f'&page={page}')
         for i in range(max_retries):
@@ -93,8 +90,10 @@ def write_file(filename, dict):
     title = dict['title']
     runtime = dict['runtime']
     language = dict['original_language']
+    release_date = dict['release_date']
     overview = dict['overview']
     all_genres = dict['genres']
+
     genre_str = ""
     for genre in all_genres:
         genre_str += genre['name'] + ", "
@@ -107,7 +106,8 @@ def write_file(filename, dict):
 
     keyword_str = keyword_str[:-2]
 
-    result = [title, runtime, language, overview, genre_str, keyword_str]
+    result = [title, runtime, language, overview,
+              release_date, genre_str, keyword_str]
     # write data
     csvwriter.writerow(result)
     csvFile.close()
