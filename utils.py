@@ -55,9 +55,10 @@ def get_data(API_key, Movie_ID, max_retries=5):
     dict: JSON formatted dictionary containing all details of your film of
     interest
     """
-    query = 'https://api.themoviedb.org/3/movie/' + \
-        Movie_ID+'?api_key='+API_key+'&language=en-US' + \
-        '&append_to_response=keywords'
+
+    query = 'https://api.themoviedb.org/3/movie/' + Movie_ID + \
+        '?api_key='+API_key + '&append_to_response=keywords,' + \
+            'recommendations,watch/providers,credits&language=en-US'
     response = requests.get(query)
     for i in range(max_retries):
         if response.status_code == 429:
@@ -89,7 +90,7 @@ def write_file(filename, dict):
     csvwriter = csv.writer(csvFile)
     # unpack the result to access the "collection name" element
     title = dict['title']
-    runtime = dict['runtime']
+    runtime = str(dict['runtime']) + " minutes"
     language = dict['original_language']
     release_date = dict['release_date']
     overview = dict['overview']
@@ -109,24 +110,73 @@ def write_file(filename, dict):
 
     keyword_str = keyword_str[:-2]
 
-    # Adding Wikipedia summaries if available
-    wiki_wiki = wikipediaapi.Wikipedia(
-        user_agent='FilmBot (ed.izaguirre@pm.me)',
-        language='en',
-        extract_format=wikipediaapi.ExtractFormat.WIKI
-    )
+    # Parsing recommendations
+    recommendations = dict['recommendations']['results']
+    recommendation_str = ""
+    for recommendation in recommendations:
+        recommendation_str += recommendation['title'] + ", "
+    recommendation_str = recommendation_str[:-2]
 
-    p_wiki = wiki_wiki.page(title)
+    # Parsing watch providers
+    watch_providers = dict['watch/providers']['results']
+    stream_str, buy_str, rent_str = "", "", ""
+    if 'US' in watch_providers:
+        watch_providers = watch_providers['US']
+        provider_strings = ['flatrate', 'buy', 'rent']
+        for string in provider_strings:
+            if string not in watch_providers:
+                continue
 
-    if p_wiki.exists():
-        # If wiki exists, append text
-        wiki_summary = p_wiki.text
-    else:
-        # Otherwise, append a blank string
-        wiki_summary = ""
+            _str = ""
+
+            for element in watch_providers[string]:
+                _str += element['provider_name'] + ", "
+            _str = _str[:-2] + " "
+
+            if string == 'flatrate':
+                stream_str += _str
+            elif string == 'buy':
+                buy_str += _str
+            else:
+                rent_str += _str
+
+    credits = dict['credits']
+    cast_list, crew_list = [], []
+
+    # Parsing cast
+    cast = credits['cast']
+    for member in cast:
+        cast_list.append(member["name"])
+
+    # Parsing crew
+    crew = credits['crew']
+    for member in crew:
+        crew_list.append(member["name"])
+
+    # Removing duplicates and making a string
+    cast_str = ', '.join(list(set(cast_list)))
+    crew_str = ', '.join(list(set(crew_list)))
+
+    # # Adding Wikipedia summaries if available
+    # wiki_wiki = wikipediaapi.Wikipedia(
+    #     user_agent='FilmBot (ed.izaguirre@pm.me)',
+    #     language='en',
+    #     extract_format=wikipediaapi.ExtractFormat.WIKI
+    # )
+
+    # p_wiki = wiki_wiki.page(title)
+
+    # if p_wiki.exists():
+    #     # If wiki exists, append text
+    #     wiki_summary = p_wiki.text
+    # else:
+    #     # Otherwise, append a blank string
+    #     wiki_summary = ""
 
     result = [title, runtime, language, overview,
-              release_date, genre_str, keyword_str, wiki_summary]
+              release_date, genre_str, keyword_str,
+              recommendation_str, cast_str, crew_str,
+              stream_str, buy_str, rent_str]
 
     # write data
     csvwriter.writerow(result)
