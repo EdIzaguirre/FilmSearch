@@ -90,11 +90,13 @@ def write_file(filename, dict):
     csvwriter = csv.writer(csvFile)
     # unpack the result to access the "collection name" element
     title = dict['title']
-    runtime = str(dict['runtime']) + " minutes"
+    runtime = dict['runtime']
     language = dict['original_language']
     release_date = dict['release_date']
     overview = dict['overview']
     all_genres = dict['genres']
+    website = 'movie_collection_data.csv' if dict['homepage'] == '' else dict['homepage']
+    prod_companies = dict['production_companies']
 
     # Parsing genres
     genre_str = ""
@@ -102,13 +104,16 @@ def write_file(filename, dict):
         genre_str += genre['name'] + ", "
     genre_str = genre_str[:-2]
 
-    # Parsing keywords
+    # Parsing keywords (remove non-English words)
     all_keywords = dict['keywords']['keywords']
     keyword_str = ""
     for keyword in all_keywords:
-        keyword_str += keyword['name'] + ", "
-
-    keyword_str = keyword_str[:-2]
+        if is_english(keyword['name']):
+            keyword_str += keyword['name'] + ", "
+    if keyword_str == "":
+        keyword_str = "None"
+    else:
+        keyword_str = keyword_str[:-2]
 
     # Parsing recommendations
     recommendations = dict['recommendations']['results']
@@ -141,21 +146,28 @@ def write_file(filename, dict):
                 rent_str += _str
 
     credits = dict['credits']
-    cast_list, crew_list = [], []
+    actor_list, director_list = [], []
 
     # Parsing cast
     cast = credits['cast']
-    for member in cast:
-        cast_list.append(member["name"])
+    NUM_ACTORS = 5
+    for member in cast[:NUM_ACTORS]:
+        actor_list.append(member["name"])
 
     # Parsing crew
     crew = credits['crew']
     for member in crew:
-        crew_list.append(member["name"])
+        if member['job'] == 'Director':
+            director_list.append(member["name"])
 
-    # Removing duplicates and making a string
-    cast_str = ', '.join(list(set(cast_list)))
-    crew_str = ', '.join(list(set(crew_list)))
+    actor_str = ', '.join(list(set(actor_list)))
+    director_str = ', '.join(list(set(director_list)))
+
+    # Parsing production companies
+    prod_str = ""
+    for company in prod_companies:
+        prod_str += company['name'] + ", "
+    prod_str = prod_str[:-2]
 
     # # Adding Wikipedia summaries if available
     # wiki_wiki = wikipediaapi.Wikipedia(
@@ -175,9 +187,18 @@ def write_file(filename, dict):
 
     result = [title, runtime, language, overview,
               release_date, genre_str, keyword_str,
-              recommendation_str, cast_str, crew_str,
-              stream_str, buy_str, rent_str]
+              recommendation_str, actor_str, director_str,
+              stream_str, buy_str, rent_str, prod_str, website]
 
     # write data
     csvwriter.writerow(result)
     csvFile.close()
+
+
+def is_english(s):
+    try:
+        s.encode(encoding='utf-8').decode('ascii')
+    except UnicodeDecodeError:
+        return False
+    else:
+        return True
