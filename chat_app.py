@@ -25,19 +25,29 @@ class FilmSearch:
         self.model = ChatOpenAI(model='gpt-3.5-turbo-0125', temperature=0.5)
 
         retrieval_query_window = """
-        WITH node, score
-        RETURN "Title: " + node.title + "\n" +
-                "Overview: " + node.overview  + "\n" +
-                "Release Date: " + node.release_date  + "\n" +
-                "Runtime: " + node.runtime + " minutes" + "\n" +
-                "Language: " + node.language  + "\n" +
-                "Keywords: " + node.keywords  + "\n" +
-                "Source: " + node.source  + "\n" +
-                "Score: " + score + "\n"
-                as text,
-            score,
-            node {.source} AS metadata
-        """
+            MATCH (node:Film)-[:HAS_GENRE]->(genre:Genre)
+            MATCH (actor:Actor)-[:STARRED_IN]->(node)
+            MATCH (director:Director)-[:HAS_DIRECTED]->(node)
+            MATCH (prod_co:Production_Company)-[:PRODUCED]->(node)
+            WITH 
+                node, collect(distinct genre.type) as genres, 
+                collect(distinct actor.name) as actors, 
+                collect(distinct director.name) as directors, 
+                collect(distinct prod_co.name) as companies, 
+                score
+            RETURN "Title: " + node.title + "\n" + 
+                    "Overview: " + node.overview  + "\n" + 
+                    "Release Date: " + node.release_date  + "\n" + 
+                    "Runtime: " + node.runtime + " minutes" + "\n" + 
+                    "Language: " + node.language  + "\n" + 
+                    "Keywords: " + node.keywords  + "\n" + 
+                    "Genres: " + apoc.text.join(genres, ', ') + "\n" +
+                    "Actors: " + apoc.text.join(actors, ', ') + "\n" +
+                    "Directors: " + apoc.text.join(directors, ', ') + "\n" +
+                    "Production Companies: " + apoc.text.join(companies, ', ') + "\n" +
+                    "Source: " + node.source  + "\n"
+                    as text, score, node {.source} AS metadata
+            """
 
         vector_store_window = Neo4jVector.from_existing_graph(
             embedding=OpenAIEmbeddings(),
@@ -46,7 +56,8 @@ class FilmSearch:
             password=NEO4J_PASSWORD,
             index_name="film_index",
             node_label="Film",
-            text_node_properties=["overview", "keywords"],
+            text_node_properties=["overview", "keywords",
+                                  "language", "release_date", "runtime"],
             embedding_node_property="embedding",
             search_type="hybrid",
             retrieval_query=retrieval_query_window

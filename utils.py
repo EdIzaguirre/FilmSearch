@@ -1,7 +1,7 @@
 import requests
 import csv
 import time
-import wikipediaapi
+from iso639 import languages
 
 
 def get_id_list(api_key, year, max_retries=5):
@@ -58,7 +58,7 @@ def get_data(API_key, Movie_ID, max_retries=5):
 
     query = 'https://api.themoviedb.org/3/movie/' + Movie_ID + \
         '?api_key='+API_key + '&append_to_response=keywords,' + \
-            'recommendations,watch/providers,credits&language=en-US'
+            'watch/providers,credits&language=en-US'
     response = requests.get(query)
     for i in range(max_retries):
         if response.status_code == 429:
@@ -91,12 +91,18 @@ def write_file(filename, dict):
     # unpack the result to access the "collection name" element
     title = dict['title']
     runtime = dict['runtime']
-    language = dict['original_language']
+    language_code = dict['original_language']
     release_date = dict['release_date']
     overview = dict['overview']
     all_genres = dict['genres']
     website = 'movie_collection_data.csv' if dict['homepage'] == '' else dict['homepage']
     prod_companies = dict['production_companies']
+
+    # Converting language
+    if language_code != 'xx':
+        language = languages.get(alpha2=language_code).name
+    else:
+        language = 'Unknown'
 
     # Parsing genres
     genre_str = ""
@@ -114,13 +120,6 @@ def write_file(filename, dict):
         keyword_str = "None"
     else:
         keyword_str = keyword_str[:-2]
-
-    # Parsing recommendations
-    recommendations = dict['recommendations']['results']
-    recommendation_str = ""
-    for recommendation in recommendations:
-        recommendation_str += recommendation['title'] + ", "
-    recommendation_str = recommendation_str[:-2]
 
     # Parsing watch providers
     watch_providers = dict['watch/providers']['results']
@@ -187,8 +186,8 @@ def write_file(filename, dict):
 
     result = [title, runtime, language, overview,
               release_date, genre_str, keyword_str,
-              recommendation_str, actor_str, director_str,
-              stream_str, buy_str, rent_str, prod_str, website]
+              actor_str, director_str, stream_str,
+              buy_str, rent_str, prod_str, website]
 
     # write data
     csvwriter.writerow(result)
