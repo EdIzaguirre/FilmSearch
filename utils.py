@@ -95,7 +95,7 @@ def write_file(filename, dict):
     release_date = dict['release_date']
     overview = dict['overview']
     all_genres = dict['genres']
-    website = 'movie_collection_data.csv' if dict['homepage'] == '' else dict['homepage']
+    website = 'Unknown' if dict['homepage'] == '' else dict['homepage']
     prod_companies = dict['production_companies']
 
     # Converting language

@@ -6,15 +6,14 @@ st.title('🎥 Film Search')
 st.subheader('The better way to search for films.')
 """
 This film search bot has been given a database of roughly the 100 most popular
-films from the years 2022-2023. It will only recommend films from this
+films from the years 2019-2023. It will only recommend films from this
 database.
 """
 
 
 def generate_response(input_text):
-    agent = FilmSearch()
-    response = agent.ask({"input": input_text})
-    st.info(response['output'])
+    chat = FilmSearch()
+    st.write_stream(chat.ask(input_text))
 
 
 with st.form('my_form'):
@@ -27,13 +26,12 @@ with st.form('my_form'):
 
 st.divider()
 
-YEARS = [2022, 2023]
+YEARS = list(range(2019, 2023))
 
-df2022 = pd.read_csv('data/2022_movie_collection_data.csv')
-df2023 = pd.read_csv('data/2023_movie_collection_data.csv')
+dfs = [pd.read_csv(f'data/{year}_movie_collection_data.csv') for year in YEARS]
 
 # Combine the dataframes
-combined_df = pd.concat([df2022, df2023])
+combined_df = pd.concat(dfs)
 st.header("Data Source")
 st.write("""
          All data was pulled from the The Movie Database (TMDB) and compiled
