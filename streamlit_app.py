@@ -26,7 +26,7 @@ with st.form('my_form'):
 
 st.divider()
 
-YEARS = list(range(2019, 2023))
+YEARS = list(range(2019, 2024))
 
 dfs = [pd.read_csv(f'data/{year}_movie_collection_data.csv') for year in YEARS]
 

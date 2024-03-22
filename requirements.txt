@@ -2,3 +2,4 @@ streamlit
 openai
 langchain
 iso-639
+lark
