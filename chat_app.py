@@ -123,8 +123,6 @@ class FilmSearch:
                           type="string or list[string]"),
             AttributeInfo(name="Production Companies",
                           description="The production companies of the movie", type="string or list[string]"),
-            AttributeInfo(name="Website",
-                          description="The website of the movie", type="string"),
         ]
 
         self.constructor_prompt = get_query_constructor_prompt(

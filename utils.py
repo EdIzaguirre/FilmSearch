@@ -95,7 +95,6 @@ def write_file(filename, dict):
     release_date = dict['release_date']
     overview = dict['overview']
     all_genres = dict['genres']
-    website = 'Unknown' if dict['homepage'] == '' else dict['homepage']
     prod_companies = dict['production_companies']
 
     # Parsing release date
@@ -190,7 +189,7 @@ def write_file(filename, dict):
     result = [title, runtime, language, overview,
               release_year, genre_str, keyword_str,
               actor_str, director_str, stream_str,
-              buy_str, rent_str, prod_str, website]
+              buy_str, rent_str, prod_str]
 
     # write data
     csvwriter.writerow(result)
