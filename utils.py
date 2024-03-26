@@ -98,10 +98,13 @@ def write_file(filename, dict):
     website = 'Unknown' if dict['homepage'] == '' else dict['homepage']
     prod_companies = dict['production_companies']
 
+    # Parsing release date
+    release_year = release_date.split('-')[0]
+
     # Converting language
-    if language_code != 'xx':
+    try:
         language = languages.get(alpha2=language_code).name
-    else:
+    except KeyError:
         language = 'Unknown'
 
     # Parsing genres
@@ -185,7 +188,7 @@ def write_file(filename, dict):
     #     wiki_summary = ""
 
     result = [title, runtime, language, overview,
-              release_date, genre_str, keyword_str,
+              release_year, genre_str, keyword_str,
               actor_str, director_str, stream_str,
               buy_str, rent_str, prod_str, website]
 
