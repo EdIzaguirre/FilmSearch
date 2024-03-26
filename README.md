@@ -22,4 +22,4 @@ Movies contain the following attributes:
 - Rent
 - Production Companies
 
-Semantic search occurs over the Overview and Keywords attributes, while the rest are packaded as metadata.
+Semantic search occurs over the Overview and Keywords attributes, while the rest are packaged as metadata.
