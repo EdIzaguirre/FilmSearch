@@ -3,11 +3,27 @@ from chat_app import FilmSearch
 import pandas as pd
 import json
 
+st.set_page_config(
+    page_title="Film Search",
+    page_icon="🎥",
+)
+
 with open('./config.json') as f:
     config = json.load(f)
 
-st.title('🎥 Film Search')
-st.header('The better way to search for films.')
+st.markdown("<h1 style='text-align: center;'>🎥 Film Search</h1>",
+            unsafe_allow_html=True)
+
+st.markdown("<h2 style='text-align: center;'>The better way to search for films.</h2>",
+            unsafe_allow_html=True)
+
+# Remove orange/red bar at the top of the website
+hide_decoration_bar_style = '''
+    <style>
+        header {visibility: hidden;}
+    </style>
+'''
+st.markdown(hide_decoration_bar_style, unsafe_allow_html=True)
 
 beginning_year = config["years"][0]
 ending_year = config["years"][-1]
