@@ -17,14 +17,6 @@ st.markdown("<h1 style='text-align: center;'>🎥 Film Search</h1>",
 st.markdown("<h2 style='text-align: center;'>The better way to search for films.</h2>",
             unsafe_allow_html=True)
 
-# Remove orange/red bar at the top of the website
-hide_decoration_bar_style = '''
-    <style>
-        header {visibility: hidden;}
-    </style>
-'''
-st.markdown(hide_decoration_bar_style, unsafe_allow_html=True)
-
 beginning_year = config["years"][0]
 ending_year = config["years"][-1]
 
