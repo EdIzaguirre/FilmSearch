@@ -65,7 +65,6 @@ with st.form('my_form'):
 st.divider()
 
 st.header("Data Source")
-url = "https://gist.githubusercontent.com/EdIzaguirre/816f7032b2a819b2eac13eb109e9cd0f/raw/ac517faa45fb6d6069f7d4bc64d01c4b6cb795c4/full_movie_collection.csv"
 st.write(""" All data was pulled from the The Movie Database (TMDB) and 
          compiled into a CSV file, provided here. Watch providers were 
          pulled from JustWatch. Below is a snippet of data from the year 2023. 
