@@ -64,18 +64,19 @@ with st.form('my_form'):
 
 st.divider()
 
-df = pd.read_csv('./data/full_movie_collection_data.csv')
-
-# Prevent commas from appearing in release year
-df['Release Year'] = df['Release Year'].astype(str)
-
-# Reverse order
-df = df.iloc[::-1]
-
 st.header("Data Source")
-st.write("""
-         All data was pulled from the The Movie Database (TMDB) and compiled
-         into a CSV file, provided here. Watch providers were pulled from
-         JustWatch.
-         """)
-st.dataframe(df, hide_index=True)
+url = "https://gist.githubusercontent.com/EdIzaguirre/816f7032b2a819b2eac13eb109e9cd0f/raw/ac517faa45fb6d6069f7d4bc64d01c4b6cb795c4/full_movie_collection.csv"
+st.write(""" All data was pulled from the The Movie Database (TMDB) and 
+         compiled into a CSV file, provided here. Watch providers were 
+         pulled from JustWatch. Below is a snippet of data from the year 2023. 
+         For the full data, download the full movie collection data csv.""")
+st.write("[View here.](https://github.com/EdIzaguirre/FilmSearch/blob/main/data/full_movie_collection_data.csv)")
+
+# df = pd.read_csv('./data/2023_movie_collection_data.csv')
+
+# # Prevent commas from appearing in release year
+# df['Release Year'] = df['Release Year'].astype(str)
+
+# # Reverse order
+# df = df.iloc[::-1]
+# st.dataframe(df, hide_index=True)
