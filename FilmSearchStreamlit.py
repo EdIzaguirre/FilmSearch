@@ -64,19 +64,18 @@ with st.form('my_form'):
 
 st.divider()
 
-# dfs = [pd.read_csv(f'data/{year}_movie_collection_data.csv')
-#        for year in range(beginning_year, ending_year+1)]
+df = pd.read_csv('./data/full_movie_collection_data.csv')
 
-# # Combine the dataframes
-# combined_df = pd.concat(dfs)
+# Prevent commas from appearing in release year
+df['Release Year'] = df['Release Year'].astype(str)
 
-# # Prevent commas from appearing in release year
-# combined_df['Release Year'] = combined_df['Release Year'].astype(str)
+# Reverse order
+df = df.iloc[::-1]
 
-# st.header("Data Source")
-# st.write("""
-#          All data was pulled from the The Movie Database (TMDB) and compiled
-#          into a CSV file, provided here. Watch providers were pulled from
-#          JustWatch.
-#          """)
-# st.dataframe(combined_df, hide_index=True)
+st.header("Data Source")
+st.write("""
+         All data was pulled from the The Movie Database (TMDB) and compiled
+         into a CSV file, provided here. Watch providers were pulled from
+         JustWatch.
+         """)
+st.dataframe(df, hide_index=True)
