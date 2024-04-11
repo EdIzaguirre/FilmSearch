@@ -43,7 +43,7 @@ class FilmSearch:
     def initialize_query_constructor(self):
         document_content_description = "Brief overview of a movie, along with keywords"
 
-        # Define allowed comparators list
+        # Allowed comparators list
         allowed_comparators = [
             "$eq",  # Equal to (number, string, boolean)
             "$ne",  # Not equal to (number, string, boolean)
