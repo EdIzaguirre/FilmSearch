@@ -24,7 +24,9 @@ ending_year = config["years"][-1]
 f"""
 This film search bot has been given a database of roughly the 100 most popular
 films from the years {beginning_year}-{ending_year}. It will only recommend films from this
-database.
+database. This bot is able to create metadata filters for your recommendations via natural language.
+For more information, please [see my article](https://towardsdatascience.com/how-to-build-a-rag-system-with-a-self-querying-retriever-in-langchain-16b4fa23e9ad)
+in Towards Data Science.
 """
 
 "To see the code repository for this project, [click here](https://github.com/EdIzaguirre/FilmSearch)."
