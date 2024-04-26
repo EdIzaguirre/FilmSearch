@@ -23,8 +23,8 @@ def get_id_list(api_key, year, max_retries=5):
 
     total_pages = 5  # 5 pages of ids = 100 movies
     for page in range(1, total_pages + 1):
-        response = requests.get(url + f'&page={page}')
         for i in range(max_retries):
+            response = requests.get(url + f'&page={page}')
             if response.status_code == 429:
                 # If the response was a 429, wait and then try again
                 print(
